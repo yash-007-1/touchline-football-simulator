@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const crypto = require('crypto');
@@ -319,10 +319,11 @@ function advanceAuction(room) {
 
     if (alreadyOwned) continue;
 
-    room.currentPlayer = player;
+    const baseBid = player.rating >= 90 ? 30 : player.rating >= 85 ? 20 : 15;
+    room.currentPlayer = { ...player, baseBid };
     room.highestBid = 0;
     room.highestBidder = null;
-    room.endsAt = Date.now() + 15000;
+    room.endsAt = Date.now() + 6000;
 
     broadcastRoom(room);
     return;
@@ -503,7 +504,7 @@ io.on('connection', socket => {
     room.highestBid = amount;
     room.highestBidder = team.id;
 
-    room.endsAt = Date.now() + 12000;
+    room.endsAt = Date.now() + 6000;
 
     broadcastRoom(room);
   });
